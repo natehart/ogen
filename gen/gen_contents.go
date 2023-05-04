@@ -174,11 +174,15 @@ func (g *Generator) generateFormContent(
 	for _, f := range structType.Fields {
 		tag := f.Tag.JSON
 
+		style := openapi.QueryStyleForm
+		if f.Spec.Schema.Type == jsonschema.Object || f.Spec.Schema.Type == jsonschema.Array {
+			style = openapi.QueryStyleDeepObject
+		}
 		spec := &openapi.Parameter{
 			Name:     tag,
 			Schema:   f.Spec.Schema,
 			In:       openapi.LocationQuery,
-			Style:    openapi.QueryStyleForm,
+			Style:    style,
 			Explode:  true,
 			Required: f.Spec.Required,
 		}
